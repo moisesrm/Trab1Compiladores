@@ -1,0 +1,20 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript">
+	function minusculo(element){
+		var value = element.value.toLowerCase();
+		element.value = value;
+	}
+	function tecla(btn,element) {
+		if(btn.keyCode == 32){
+			element.value += ' ->';	
+		}
+	}
+</script>
+<h2>Trabalho pratico da disciplina de Compiladores</h2>
+<form action="resultado.php" method="post">
+  Simbolos Terminais = <input type="text" name="terminais" onkeypress="minusculo(this)"  onkeyup="minusculo(this)" onkeydown="minusculo(this)">
+  Gramatica = {<textarea name="gramatica" style="vertical-align: top;" id="gramatica" onkeydown="tecla(event,this)"></textarea>}<br />
+  Entrada = <input type="text" name="entrada" onkeypress="minusculo(this)"  onkeyup="minusculo(this)" onkeydown="minusculo(this)">
+  <p/><p/>
+  <input type="submit">
+</form>
