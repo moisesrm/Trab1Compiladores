@@ -391,61 +391,70 @@
         return $tabelaPreditivaTabular;   
     }
 
-	function reconheceEntrada($tabela,$entrada,$terminais,$simbolo_inicio){
+	function reconheceEntrada($tabela,$entrada,$terminais){
 		$entrada = explode(" ", $entrada);
-		$pilha = array("$",$simbolo_inicio);
-		$senteca = "";	
-		
-		while($e = current($entrada)){
-			if(@$tabela[end($pilha)][$e] !== null){
+		$pilha = array(key($tabela));
+		$senteca = "";
+        $sentencaTabela = "";
+        $tabelaPreditivaTabular = "<table><th>PILHA</th><th>ENTRADA</th><th>SAIDA</th>";
+		while($e = current($entrada)){  
+			if($tabela[end($pilha)][$e] !== null){
+                $tabelaPreditivaTabular .= geraLinhasTabelas($pilha,$entrada,$sentencaTabela);
 				$sentenca = $tabela[end($pilha)][$e];
+                $sentencaTabela = $sentenca;
+
 				$ultimoSimboloPilha = key($pilha);
 				unset($pilha[$ultimoSimboloPilha]);
 				if($sentenca[1] == "'"){
-					$sentenca = substr($sentenca,5);
-				}else{
 					$sentenca = substr($sentenca,4);
+				}else{
+					$sentenca = substr($sentenca,3);
 				}
 				for($simbolo = strlen($sentenca)-1; $simbolo >= 0; $simbolo--){
-					if($sentenca[$simbolo] == "'"){
-						$pilha1[] = $sentenca[$simbolo-1]."'";
-						$simbolo--;
-					}	
-					elseif(ctype_upper($sentenca[$simbolo])){
-						$pilha1[] = $sentenca[$simbolo];
-					}else{
-						foreach($terminais as $terminal){ 
-							if(strpos($sentenca,$terminal) !== FALSE){ //Verifica qual é o terminal e armazena
-								$pilha1[] = $terminal;
-								$simbolo-=(strlen($terminal)-1);
-								break;
+					if($sentenca[$simbolo] != '>' && $sentenca[$simbolo-1] != '-'){
+						if($sentenca[$simbolo] == "'"){
+							$pilha1[] = $sentenca[$simbolo-1]."'";
+							$simbolo--;
+						}	
+						elseif(ctype_upper($sentenca[$simbolo])){
+							$pilha1[] = $sentenca[$simbolo];
+						}else{
+							foreach($terminais as $terminal){ 
+								if(stripos($sentenca,$terminal)){ //Verifica qual é o terminal e armazena
+									$pilha1[] = $terminal;
+									$simbolo-=(strlen($terminal)-1);
+									break;
+								}
 							}
 						}
-					}									
-				}
-				foreach($pilha1 as $p1){
-					$pilha[] = $p1;
-				}
+					}						
+				}			
+				$pilha = array_merge($pilha1,$pilha);
 				$pilha1 = "";
-				if(end($pilha) == "X"){
-					end($pilha); 
-					$key = key($pilha);
-					unset($pilha[$key]);
-					unset($pilha[$key-1]);					
-				}
 			}
-			else{
-				echo "Nao aceita";
-				exit;
+			else{              
+                $tabelaPreditivaTabular .= geraLinhasTabelas($pilha,$entrada,$sentencaTabela);    
+                $p = $pilha;
+                $simboloEntrada = $entrada[key($entrada)];
+                $simboloPilha = end($p);                
+                    
+                if($simboloEntrada == $simboloPilha){
+                    unset($entrada[key($entrada)]);                    
+                    unset($pilha[key($p)]);
+                }
+
+                $tabelaPreditivaTabular .= geraLinhasTabelas($pilha,$entrada,"");   
+                echo $tabelaPreditivaTabular;
 			}
-			
-			if(end($pilha) === "$" && $e === "$"){
+			if(empty($entrada) && empty($pilha)){
 				echo "Aceita";
 				exit;
-			}elseif(end($pilha) == $e){			
-				end($pilha);         // move the internal pointer to the end of the array
-				$key = key($pilha);
-				unset($pilha[$key]);
+			}elseif(!empty($entrada) && empty($pilha)){
+				echo "Não aceita";
+				exit;
+			}elseif(ctype_lower(end($pilha)) && end($pilha) == $entrada[key($e)]){  
+				unset($entrada[key($e)]);
+				unset($pilha[key(p)]);
 				next($entrada);
 			}			
 		}
