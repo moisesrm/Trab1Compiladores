@@ -378,6 +378,19 @@
         echo $html;
 	}
 
+    function geraLinhasTabelas($pilha,$entrada,$sentencaTabela){       
+        $tabelaPreditivaTabular = "<tr><td>";
+        foreach($pilha as $pilhaTabela){
+            $tabelaPreditivaTabular .= $pilhaTabela;
+        }
+        $tabelaPreditivaTabular .= "</td><td>";                
+        foreach($entrada as $entradaTabela){
+            $tabelaPreditivaTabular .= $entradaTabela;
+        }                
+        $tabelaPreditivaTabular .= "</td><td>$sentencaTabela</td></tr>"; 
+        return $tabelaPreditivaTabular;   
+    }
+
 	function reconheceEntrada($tabela,$entrada,$terminais,$simbolo_inicio){
 		$entrada = explode(" ", $entrada);
 		$pilha = array("$",$simbolo_inicio);
